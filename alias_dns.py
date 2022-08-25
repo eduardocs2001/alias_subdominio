@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
+import subprocess
+import requests
 
 class alias_DNS:
 
@@ -19,8 +21,8 @@ class alias_DNS:
             else:
                 pass
         self.remove_repetidos()
-        for x in self.subdominio:
-            print(x)
+ 
+
         
     def remove_repetidos(self):
         l = []
@@ -32,6 +34,17 @@ class alias_DNS:
                     pass
         l.sort()
         self. subdominio = l
+    
+    def consulta(self):
+        for subdominio in self.subdominio:
+            resultado = subprocess.getoutput(f'host -t cname {subdominio} | grep "alias"')
+            if len(resultado) > 5:
+                url = f'https://{((resultado.split("for"))[-1][0:-1]).strip()}/'
+                print(f"Resultado: {resultado}\nAlias: {((resultado.split('for'))[-1][0:-1]).strip()}\nGet: {requests.get(url)}\n")
+            else:
+                pass
+  
+            
 
 
 
@@ -41,3 +54,4 @@ class alias_DNS:
 if __name__ == '__main__':
     dns = alias_DNS()
     dns.tratativa()
+    dns.consulta()
